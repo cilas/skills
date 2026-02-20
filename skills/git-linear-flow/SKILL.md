@@ -17,7 +17,7 @@ description: Linear + Git integration workflow. MANDATORY for any implementation
 | 2 | Every new implementation must start by creating a **new git worktree** from an **up-to-date** `main`. |
 | 3 | If a Linear issue link is provided, **BLOCK** implementation until its content is successfully read via MCP. |
 | 4 | Always use the PR template (`.github/PULL_REQUEST_TEMPLATE.md`) when opening a PR. |
-| 5 | Before opening a PR: `bun run lint` + `bunx tsc --noEmit` + `bun test` must ALL pass. |
+| 5 | Before opening a PR: all quality checks (lint, type check, tests) must ALL pass. |
 | 6 | Keep the Linear issue updated with comments (progress, decisions, blockers, learnings). |
 | 7 | Commits must be atomic — one logical change per commit. |
 | 8 | Be token-efficient. No unnecessary reads, no redundant searches. |
@@ -30,11 +30,11 @@ description: Linear + Git integration workflow. MANDATORY for any implementation
 Derive the branch name from the Linear issue ID and a short slug:
 
 ```
-feature/CIL-42-add-user-auth
-bugfix/CIL-99-fix-login-redirect
-hotfix/CIL-120-patch-xss-vulnerability
-refactor/CIL-55-extract-use-case
-chore/CIL-70-update-dependencies
+feature/ISSUE-42-add-user-auth
+bugfix/ISSUE-99-fix-login-redirect
+hotfix/ISSUE-120-patch-xss-vulnerability
+refactor/ISSUE-55-extract-use-case
+chore/ISSUE-70-update-dependencies
 ```
 
 | Prefix | When |
@@ -52,8 +52,8 @@ chore/CIL-70-update-dependencies
 Derive the worktree directory from the branch slug (outside the main repo folder):
 
 ```bash
-../sigar-CIL-42-add-user-auth
-../sigar-CIL-99-fix-login-redirect
+../repo-ISSUE-42-add-user-auth
+../repo-ISSUE-99-fix-login-redirect
 ```
 
 Use lowercase and hyphenated names; keep it short and unique.
@@ -87,10 +87,10 @@ git checkout main
 git pull origin main
 
 # 3. Create a NEW worktree with a NEW branch from main
-git worktree add ../sigar-CIL-XX-short-description -b feature/CIL-XX-short-description main
+git worktree add ../repo-ISSUE-XX-short-description -b feature/ISSUE-XX-short-description main
 
 # 4. Enter the new worktree
-cd ../sigar-CIL-XX-short-description
+cd ../repo-ISSUE-XX-short-description
 ```
 
 > Always verify `main` is synced with remote before creating the worktree. If `git pull` fails or has conflicts, resolve FIRST.
@@ -114,7 +114,7 @@ cd ../sigar-CIL-XX-short-description
 
 [optional body]
 
-[optional footer: Ref: CIL-XX]
+[optional footer: Ref: ISSUE-XX]
 ```
 
 | Type | When |
@@ -137,7 +137,7 @@ feat(contracts): add lease expiration notification
 - Send email 30 days before expiration
 - Create notification preference setting
 
-Ref: CIL-42
+Ref: ISSUE-42
 ```
 
 ### Phase 4 — Pre-PR Validation
@@ -146,20 +146,20 @@ Ref: CIL-42
 
 ```bash
 # 1. Lint
-bun run lint
+<project lint command>
 
 # 2. Type check
-bunx tsc --noEmit
+<project type check command>
 
 # 3. Unit Tests
-bun test:unit
+<project unit test command>
 ```
 
-| Check | Command | Must Pass? |
-|-------|---------|------------|
-| Lint | `bun run lint` | ✅ YES |
-| TypeScript | `bunx tsc --noEmit` | ✅ YES |
-| Unit Tests | `bun test:unit` | ✅ YES |
+| Check | Must Pass? |
+|-------|------------|
+| Lint | ✅ YES |
+| Type check | ✅ YES |
+| Unit Tests | ✅ YES |
 
 > If ANY check fails → fix it BEFORE opening the PR. Never open a PR with failing checks.
 
@@ -167,32 +167,32 @@ bun test:unit
 
 ```bash
 # Push the branch
-git push -u origin feature/CIL-XX-short-description
+git push -u origin feature/ISSUE-XX-short-description
 ```
 
 **PR Description:** Use the template from `.github/PULL_REQUEST_TEMPLATE.md`:
 
 ```markdown
-## Motivação
+## Motivation
 <!-- What problem does this solve? -->
-Resolve: [CIL-XX](https://linear.app/cilas/issue/CIL-XX/title)
+Resolves: [ISSUE-XX](https://linear.app/org/issue/ISSUE-XX/title)
 
-## O que foi alterado
+## What changed
 - File/component A: what changed
 - File/component B: what changed
 
-## Tipo de mudança
-- [x] Nova feature  <!-- or Bug fix, Refatoração, etc. -->
+## Type of change
+- [x] New feature  <!-- or Bug fix, Refactoring, etc. -->
 
-## Plano de testes
+## Test plan
 - [ ] Test case 1
 - [ ] Test case 2
 
 ## Checklist
-- [x] `bun run lint` passou sem erros
-- [x] `bunx tsc --noEmit` passou sem erros
-- [x] Testes novos escritos com `vitest`
-- [x] Nenhuma credencial ou secret exposto no código
+- [x] Lint passed with no errors
+- [x] Type check passed with no errors
+- [x] New tests written
+- [x] No credentials or secrets exposed in the code
 ```
 
 > Use the GitHub MCP to create the PR. Always link the Linear issue.
@@ -202,13 +202,13 @@ Resolve: [CIL-XX](https://linear.app/cilas/issue/CIL-XX/title)
 ```bash
 # From the primary repo
 git worktree list
-git worktree remove ../sigar-CIL-XX-short-description
+git worktree remove ../repo-ISSUE-XX-short-description
 
 # Optional: remove stale metadata
 git worktree prune
 
 # Optional: delete local branch if no longer needed
-git branch -d feature/CIL-XX-short-description
+git branch -d feature/ISSUE-XX-short-description
 ```
 
 > Never remove a worktree with uncommitted changes.
@@ -233,14 +233,14 @@ git branch -d feature/CIL-XX-short-description
 │  1. READ Linear issue (MCP) — BLOCK if fails    │
 │  2. Update Linear → "In Progress" + comment     │
 │  3. git checkout main && git pull origin main   │
-│  4. git worktree add ../sigar-CIL-XX-slug ...   │
-│  5. cd ../sigar-CIL-XX-slug                     │
+│  4. git worktree add ../repo-ISSUE-XX-slug ...   │
+│  5. cd ../repo-ISSUE-XX-slug                     │
 │  6. Implement (atomic commits)                  │
-│  7. bun install                                 │
-│  8. bun run lint ✓                              │
-│  9. bunx tsc --noEmit ✓                         │
-│ 10. bun test:unit ✓                             │
-│ 11. git push -u origin feature/CIL-XX-slug      │
+│  7. Install dependencies                        │
+│  8. Lint ✓                                      │
+│  9. Type check ✓                                │
+│ 10. Unit tests ✓                                │
+│ 11. git push -u origin feature/ISSUE-XX-slug      │
 │ 12. Open PR (use template, link Linear issue)   │
 │ 13. Comment on Linear (summary + PR link)       │
 │ 14. Remove worktree after merge                 │
@@ -256,7 +256,7 @@ git branch -d feature/CIL-XX-short-description
 | Commit directly to `main` | Always use a feature branch in a dedicated worktree |
 | Start coding without reading the Linear issue | Read issue first, THEN code |
 | Start implementation in the primary repo directory | Create and use a new worktree first |
-| Push without running checks | Run lint + tsc + tests before push |
+| Push without running checks | Run lint + type check + tests before push |
 | One giant commit with all changes | Atomic commits, one logical change each |
 | Forget to update Linear | Comment progress, decisions, learnings |
 | Create worktree/branch from stale `main` | Always `git pull origin main` first |

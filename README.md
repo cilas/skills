@@ -282,41 +282,6 @@ Sem conflitos. Sem interferência. O repositório principal (`main`) permanece l
 
 ---
 
-## Anatomia Completa da Skill `git-linear-flow`
-
-Para referência, a skill completa que orquestra tudo isso:
-
-```markdown
----
-name: git-linear-flow
-description: Linear + Git integration workflow. MANDATORY for any implementation task.
----
-
-## Nomenclatura de Branches
-
-Padrão: `<prefixo>/CIL-XX-slug` → worktree: `../projeto-CIL-XX-slug`
-
-| Prefixo    | Quando usar              |
-|------------|--------------------------|
-| `feature/` | Nova funcionalidade      |
-| `bugfix/`  | Correção de bug          |
-| `hotfix/`  | Correção urgente em prod |
-| `refactor/`| Sem mudança de comportamento |
-| `chore/`   | Ferramentas, deps, config |
-
-## Fluxo Resumido
-
-1. Ler issue no Linear via MCP (OBRIGATÓRIO)
-2. `git checkout main && git pull`
-3. `git worktree add ../projeto-CIL-XX -b feature/CIL-XX main`
-4. Implementar com commits atômicos
-5. `lint + tsc + test` — todos devem passar
-6. `git push` + PR via GitHub MCP
-7. Limpar worktree após merge
-```
-
----
-
 ## Benefícios desse Fluxo
 
 ### Para o desenvolvedor
